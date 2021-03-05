@@ -1,0 +1,99 @@
+---
+title: "Simulating the Birthday Problem"
+author: "Owen G. Ward"
+date: "3/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+theme_set(theme_minimal())
+```
+
+## Simulating the birthday problem
+
+The birthday problem is a popular example of using probability
+to compute something perhaps surprising.
+
+> Suppose you have a group of $n$ people in a room. What is the probability
+two of them share a birthday?
+
+This is pretty easy to compute using some probability and a calculator.
+
+However, we can also write a function to simulate a group of 
+people of size $n$ and determine how many people share a birthday in
+a group.
+
+To do this, we will:
+
+1. Write a function which takes a group size $n$, and gives these
+$n$ people random birthdays from the 365 possible days in the year.
+
+```{r sim_n_birthday}
+sim_n_birthday <- function(n) {
+}
+```
+
+We can look at the simulated dates for different sizes of $n$
+
+```{r try_n}
+sim_n_birthday(10)
+sim_n_birthday(100)
+```
+
+2. We can see if there are any repeated dates in a given sample, of size 20
+say. Let's write a function `repeat_bday`, to check this. It should
+return `TRUE` if there are duplicate dates, otherwise return `FALSE`.
+
+```{r check_function, options}
+repeat_bday <- function(birthdays) {
+  
+}
+```
+
+Lets test this for some simple examples to make sure it works.
+
+```{r test_repeat}
+repeat_bday(c(1, 2, 2, 3)) # should return TRUE
+repeat_bday(c(1, 2, 3, 4)) # should return FALSE
+
+```
+
+3. Now we want to extend on this to generate a large number of simulations,
+`n_sim`, for a given $n$. One suggestion to do this is to use the `crossing`
+function, but this is quite tricky to do!
+Take a look at the initial code below and try understand the output!
+
+
+```{r tidy_solution}
+n <- 20
+num_sims <- 100
+crossing(num_people = n, sim = 1:num_sims)
+
+```
+
+What we want to do is have each row be a simulation. So for
+each row, we will sample `num_people` birthdays and determine 
+if there are any duplicates. Then we want to compute the proportion
+of duplicated birthdays across a given row.
+
+
+```{r sim_many}
+
+```
+
+We've done it for a single $n$, but we can repeat for a range of
+values of $n$ and do more simulations, with few changes!
+
+```{r sim_many_n}
+num_sims <- 1000
+
+```
+
+
+Similarly, we can plot the results easily.
+
+```{r plot-birthday}
+
+```

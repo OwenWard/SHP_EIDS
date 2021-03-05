@@ -1,0 +1,173 @@
+---
+title: "Estimating Pi using random numbers"
+author: Owen Ward
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(latex2exp)
+theme_set(theme_minimal())
+```
+
+## Estimating $\pi$.
+
+As you may know, $\pi$ is an irrational number (what does that mean?) and also transcendental (do you know what this is?). Estimation of $\pi$ has been a problem which has intrigued people for millennia. There are many famous formula which give $\pi$, some involving infinite sums, such as 
+$$
+\pi =\frac{4}{1}-\frac{4}{3}+\frac{4}{5}-\frac{4}{7}+\frac{4}{9}+\ldots
+$$
+
+Here we will see another estimate, based on the area of a circle, and using an essential tool in statistics, random numbers.
+
+Given a circle of radius $\frac{1}{2}$, with a unit circle circumscribed around it, we know the square has area $1$, while the circle has area $\frac{\pi}{4}$. So if we could estimate the area of the circle as a ratio of the area of the square then this gives an estimate of $\pi$.
+
+Suppose we can draw random points in this unit square. Then some of these points will fall inside the circle, while some will be outside. Otherwise they are inside the square but not the circle. If $N_{in}$ are in the circle and we have $N_{total}$ points then we can estimate $\pi$ as 
+$$
+\pi \approx 4\frac{N_{in}}{N_{total}}.
+$$
+
+To do this, we need to be able to determine if a given random point will be inside the circle or not? How can we figure that out?
+
+1.  First write a function which will take a point $(x,y)$ and returns `TRUE` if the point is inside the circle of radius \$\\frac{1}{2}\$ centered at \$(0.5,0.5)\$ and `FALSE` otherwise
+
+```{r in-circle}
+in_circle <- function(x, y) {
+  ## write your function here
+  ## it should return TRUE if point inside the circle
+  ## otherwise false
+}
+
+```
+
+We can test this function and see how it works on some test cases. Run the
+following examples by removing the comments.
+
+```{r test-fcn}
+# in_circle(0.5, 0.5) ## should return TRUE
+# in_circle(0, 0) ## should return FALSE
+# in_circle(0.25, 0.25) ## should return TRUE
+
+```
+
+2. Next we wish to simulate random points from this square. Write a function
+which will take in a number `n`, the number of points to simulate,
+and return a matrix where the first column is the `x` coordinate of
+each point and `y` is the second coordinate of each point.
+
+
+```{r sim-points}
+sim_points <- function(n) {
+  ### write a function here
+}
+
+```
+
+To test this function we can look at the average value of each of the
+coordinates, which we can store in `sims`.
+The average should be close to $0.5$, getting closer for 
+larger $no_sims$.
+
+```{r mean-sims}
+no_sims <- 10
+sims <- sim_points(n = no_sims)
+## compute mean of each column of sims here
+
+
+# change n and see how these values change.
+## Bonus: can you get the mean of both columns of sims using the 
+## one function. A hint is ?apply
+
+
+```
+
+3. Now we want to use the condition we came up with in 1 to count how
+many of these random points are actually in the circle. There are multiple
+ways of doing this:
+- You could use the `in_circle` function, but it is probably 
+not vectorized so you
+would need to iterate over the rows of `sims`. 
+This is fine, but there are faster solutions.
+- Using a vectorized function directly (which you probably used inside of
+`in_circle`) will be quicker.
+
+
+```{r}
+### write the solution here
+```
+
+If we repeat this again with new random draws, the answer will likely be 
+different. Also, as `no_sims` is small here there will
+be a large amount of variance in the answer. See what happens as `no_sims`
+is made larger.
+
+```{r}
+no_sims <- 100
+sims <- sim_points(n = no_sims)
+
+no_sims <- 1000
+sims <- sim_points(n = no_sims)
+
+no_sims <- 10000
+sims <- sim_points(n = no_sims)
+
+```
+
+With larger `no_sim` then the estimate will get closer to the through value, and there will be less variance.
+
+```{r}
+no_sims <- 100000
+sims <- sim_points(n = no_sims)
+
+```
+
+One way to see how the variability decreases is to look at the running total,
+which we can plot as we draw new points. We can create a vector
+`running_pi` and each time we draw a new point, add the current estimate
+of $\pi$ to this vector. The plots below will update when you do this.
+
+```{r}
+n <- 10000
+
+### construct a vector running_pi storing the estimate of pi after each
+### new point is drawn
+running_pi <- c(rep(0,n))
+
+
+```
+
+
+```{r}
+plot(running_pi,type = 'l', main = "Estimate over iterations")
+abline(a = 3.14, b = 0, col = "red")
+
+
+pi <- data.frame(iter = c(1:n), pi_iter= running_pi)
+ggplot(pi, aes(iter, pi_iter)) +
+  geom_line()+
+  ggtitle("Estimate evolving over time") +
+  ylab(TeX("Estimate of $\\pi$")) +
+  xlab("Iterations")+
+  geom_abline(slope = 0,
+              intercept = 3.14159,
+              colour = "red",
+              alpha = 0.25)
+
+
+```
+
+## Questions
+
+Adapt the above code to estimate $\pi$, 
+where instead of simulate over the whole unit circle you use only one quadrant? 
+Investigate whether this gives better or worse estimates for a given $n$. Does it 
+seem to be any better? Why? Why not?
+
+## History
+
+While thankfully we can perform this simulation easily 
+using random numbers generated by the computer, previously people had to perform 
+these simulations themselves, sometimes thousands of times. This is described for 
+a very similar method known as Buffons Needle 
+(<https://en.wikipedia.org/wiki/Buffon%27s_needle>). Can you write some code to 
+implement this method for estimating $\pi$?
